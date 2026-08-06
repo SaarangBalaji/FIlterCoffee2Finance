@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The mental map: what our respondents actually said</title>
+<style>
+  html, body { margin:0; padding:0; background:#0a0b0f; }
+  * { box-sizing: border-box; }
+</style>
+</head>
+<body>
+
+<div style="background:#0a0b0f;border-radius:16px;padding:20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:4px;">
+    <div>
+      <div style="color:#9a9aa5;font-size:13px;margin-top:6px;max-width:560px;line-height:1.6;">
+        This map surfaces the real language households used when talking about gold, decisions, and family spending. The closer two terms sit and the more they're linked, the more often they came up together.<br>
+        <span style="color:#c4c4cc;">Node size :</span> how often the idea came up. It's indicative of relative popularity within a cohort, not an exact count, so higher means it resonated more there.<br>
+        <span style="color:#c4c4cc;">Lines :</span> terms that appeared together in the same answer.<br>
+        <span style="color:#c4c4cc;">Position :</span> how closely related each term is to the others, based on shared usage, not manually placed.
+      </div>
+    </div>
+    <div id="legend" style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#c4c4cc;padding-top:2px;"></div>
+  </div>
+  <div id="stage" style="position:relative;width:100%;height:560px;margin-top:12px;border-radius:12px;overflow:hidden;background:#0a0b0f;border:1px solid #1c1d24;">
+    <svg id="svg" style="width:100%;height:100%;display:block;cursor:grab;"></svg>
+    <div id="hint" style="position:absolute;bottom:10px;left:14px;color:#6b6b76;font-size:11px;">Click a dot to isolate its connections. Click empty space to reset. Scroll to zoom.</div>
+    <div id="tooltip" style="position:absolute;pointer-events:none;background:#16171d;border:1px solid #2a2b34;border-radius:8px;padding:8px 10px;font-size:12px;color:#e4e4e8;display:none;max-width:210px;line-height:1.5;"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+(function(){
+  var DATA = {"nodes": [{"id": "gold", "hyp": "H1", "freq": 139, "segments": {"Low-Income": 59, "Middle-Class": 37, "HNI": 43}, "x": -12.12, "y": 58.78}, {"id": "emergency", "hyp": "H1", "freq": 7, "segments": {"Low-Income": 1, "Middle-Class": 2, "HNI": 4}, "x": 15.41, "y": 60.31}, {"id": "pledge", "hyp": "H1", "freq": 4, "segments": {"Middle-Class": 4}, "x": 5.27, "y": 3.8}, {"id": "pawn", "hyp": "H1", "freq": 5, "segments": {"Low-Income": 3, "Middle-Class": 2}, "x": 18.74, "y": 12.5}, {"id": "bank", "hyp": "H1", "freq": 92, "segments": {"Low-Income": 79, "Middle-Class": 10, "HNI": 3}, "x": 34.23, "y": 19.78}, {"id": "liquid", "hyp": "H1", "freq": 12, "segments": {"Low-Income": 2, "Middle-Class": 1, "HNI": 9}, "x": 17.2, "y": 73.34}, {"id": "collateral", "hyp": "H1", "freq": 12, "segments": {"Low-Income": 12}, "x": 21.29, "y": 1.27}, {"id": "contingency", "hyp": "H1", "freq": 13, "segments": {"Low-Income": 12, "Middle-Class": 1}, "x": 20.84, "y": 7.95}, {"id": "mutual fund", "hyp": "H1", "freq": 40, "segments": {"Low-Income": 17, "HNI": 23}, "x": 8.4, "y": 60.28}, {"id": "real estate", "hyp": "H1", "freq": 37, "segments": {"Low-Income": 1, "HNI": 36}, "x": 1.46, "y": 79.47}, {"id": "land", "hyp": "H1", "freq": 27, "segments": {"Low-Income": 20, "Middle-Class": 2, "HNI": 5}, "x": 11.56, "y": 32.45}, {"id": "chit fund", "hyp": "H1", "freq": 9, "segments": {"Low-Income": 6, "Middle-Class": 3}, "x": 14.9, "y": 13.33}, {"id": "debt", "hyp": "H1", "freq": 14, "segments": {"Low-Income": 6, "Middle-Class": 7, "HNI": 1}, "x": 40.71, "y": -47.9}, {"id": "loan", "hyp": "H1", "freq": 48, "segments": {"Low-Income": 48}, "x": 21.77, "y": -7.98}, {"id": "savings", "hyp": "H1", "freq": 41, "segments": {"Low-Income": 29, "Middle-Class": 7, "HNI": 5}, "x": 19.44, "y": 30.17}, {"id": "wife-led", "hyp": "H2", "freq": 11, "segments": {"Middle-Class": 11}, "x": -16.53, "y": 11.29}, {"id": "wife", "hyp": "H2", "freq": 55, "segments": {"Low-Income": 12, "Middle-Class": 23, "HNI": 20}, "x": -46.0, "y": 10.5}, {"id": "joint", "hyp": "H2", "freq": 44, "segments": {"Low-Income": 10, "Middle-Class": 20, "HNI": 14}, "x": -99.52, "y": -9.66}, {"id": "self-decides", "hyp": "H2", "freq": 6, "segments": {"Low-Income": 4, "Middle-Class": 2}, "x": 3.89, "y": 4.58}, {"id": "husband", "hyp": "H2", "freq": 21, "segments": {"Low-Income": 8, "Middle-Class": 1, "HNI": 12}, "x": -24.48, "y": 16.71}, {"id": "decision", "hyp": "H2", "freq": 51, "segments": {"Low-Income": 14, "Middle-Class": 18, "HNI": 19}, "x": -100.55, "y": -5.36}, {"id": "budgeting", "hyp": "H2", "freq": 13, "segments": {"Middle-Class": 1, "HNI": 12}, "x": -92.06, "y": -60.24}, {"id": "influence", "hyp": "H2", "freq": 7, "segments": {"HNI": 7}, "x": -25.37, "y": 5.18}, {"id": "festival", "hyp": "H3", "freq": 16, "segments": {"Low-Income": 8, "Middle-Class": 3, "HNI": 5}, "x": -17.9, "y": -39.01}, {"id": "wedding", "hyp": "H3", "freq": 38, "segments": {"Low-Income": 6, "Middle-Class": 6, "HNI": 26}, "x": 10.36, "y": -28.9}, {"id": "daughter", "hyp": "H3", "freq": 13, "segments": {"Low-Income": 4, "Middle-Class": 5, "HNI": 4}, "x": 6.84, "y": 11.48}, {"id": "grand", "hyp": "H3", "freq": 18, "segments": {"Low-Income": 10, "Middle-Class": 5, "HNI": 3}, "x": 43.61, "y": -53.16}, {"id": "simple", "hyp": "H3", "freq": 9, "segments": {"Low-Income": 2, "Middle-Class": 6, "HNI": 1}, "x": 67.92, "y": -74.13}, {"id": "relatives", "hyp": "H3", "freq": 23, "segments": {"Low-Income": 14, "Middle-Class": 5, "HNI": 4}, "x": 56.23, "y": -50.26}, {"id": "neighbours", "hyp": "H3", "freq": 3, "segments": {"Middle-Class": 3}, "x": 62.75, "y": -68.14}, {"id": "budget", "hyp": "H3", "freq": 27, "segments": {"Low-Income": 1, "Middle-Class": 9, "HNI": 17}, "x": -88.64, "y": -66.91}, {"id": "pressure", "hyp": "H3", "freq": 7, "segments": {"Middle-Class": 1, "HNI": 6}, "x": 1.6, "y": -13.37}], "edges": [{"source": "decision", "target": "joint", "weight": 28}, {"source": "chit fund", "target": "gold", "weight": 3}, {"source": "chit fund", "target": "savings", "weight": 4}, {"source": "gold", "target": "savings", "weight": 12}, {"source": "land", "target": "loan", "weight": 3}, {"source": "bank", "target": "collateral", "weight": 7}, {"source": "festival", "target": "gold", "weight": 4}, {"source": "debt", "target": "loan", "weight": 4}, {"source": "gold", "target": "land", "weight": 12}, {"source": "budget", "target": "festival", "weight": 6}, {"source": "decision", "target": "wife", "weight": 13}, {"source": "gold", "target": "grand", "weight": 3}, {"source": "gold", "target": "wife", "weight": 13}, {"source": "bank", "target": "savings", "weight": 12}, {"source": "savings", "target": "wife", "weight": 4}, {"source": "bank", "target": "relatives", "weight": 11}, {"source": "bank", "target": "gold", "weight": 24}, {"source": "festival", "target": "loan", "weight": 3}, {"source": "gold", "target": "wedding", "weight": 7}, {"source": "contingency", "target": "savings", "weight": 4}, {"source": "loan", "target": "relatives", "weight": 3}, {"source": "relatives", "target": "wife", "weight": 3}, {"source": "bank", "target": "loan", "weight": 6}, {"source": "bank", "target": "contingency", "weight": 4}, {"source": "joint", "target": "wife", "weight": 11}, {"source": "contingency", "target": "loan", "weight": 3}, {"source": "gold", "target": "loan", "weight": 5}, {"source": "emergency", "target": "gold", "weight": 6}, {"source": "emergency", "target": "liquid", "weight": 3}, {"source": "gold", "target": "liquid", "weight": 7}, {"source": "land", "target": "liquid", "weight": 3}, {"source": "gold", "target": "real estate", "weight": 28}, {"source": "decision", "target": "husband", "weight": 7}, {"source": "gold", "target": "pawn", "weight": 3}, {"source": "bank", "target": "chit fund", "weight": 3}, {"source": "debt", "target": "gold", "weight": 3}, {"source": "daughter", "target": "gold", "weight": 7}, {"source": "daughter", "target": "wedding", "weight": 5}, {"source": "husband", "target": "joint", "weight": 4}, {"source": "wife", "target": "wife-led", "weight": 11}, {"source": "gold", "target": "joint", "weight": 11}, {"source": "decision", "target": "gold", "weight": 14}, {"source": "neighbours", "target": "relatives", "weight": 3}, {"source": "daughter", "target": "wife", "weight": 3}, {"source": "grand", "target": "relatives", "weight": 3}, {"source": "gold", "target": "wife-led", "weight": 4}, {"source": "budget", "target": "budgeting", "weight": 13}, {"source": "debt", "target": "simple", "weight": 3}, {"source": "relatives", "target": "simple", "weight": 3}, {"source": "gold", "target": "pledge", "weight": 3}, {"source": "grand", "target": "simple", "weight": 3}, {"source": "budget", "target": "gold", "weight": 6}, {"source": "pressure", "target": "wedding", "weight": 4}, {"source": "gold", "target": "mutual fund", "weight": 14}, {"source": "mutual fund", "target": "real estate", "weight": 12}, {"source": "budget", "target": "decision", "weight": 5}, {"source": "budget", "target": "joint", "weight": 5}, {"source": "budgeting", "target": "decision", "weight": 5}, {"source": "budgeting", "target": "gold", "weight": 5}, {"source": "budgeting", "target": "joint", "weight": 5}, {"source": "festival", "target": "wedding", "weight": 4}, {"source": "liquid", "target": "real estate", "weight": 6}, {"source": "decision", "target": "influence", "weight": 3}, {"source": "influence", "target": "real estate", "weight": 3}]};
+
+  var HYP_COLOR = { H1: '#e8b84b', H2: '#d97a9c', H3: '#5fb4c9' };
+  var HYP_LABEL = { H1: 'H1: Gold & contingency', H2: 'H2: Purse strings', H3: 'H3: Festivals & pride' };
+
+  var legend = d3.select('#legend');
+  Object.keys(HYP_LABEL).forEach(function(h){
+    var item = legend.append('div').style('display','flex').style('align-items','center').style('gap','6px');
+    item.append('div').style('width','9px').style('height','9px').style('border-radius','50%').style('background',HYP_COLOR[h]);
+    item.append('div').text(HYP_LABEL[h]);
+  });
+
+  var stage = document.getElementById('stage');
+  var width = stage.clientWidth || 900, height = stage.clientHeight || 560;
+  var svg = d3.select('#svg').attr('viewBox', [0,0,width,height]);
+
+  var sparkleLayer = svg.append('g').attr('pointer-events', 'none');
+  var sparkles = d3.range(70).map(function(i){
+    return { x: Math.random()*width, y: Math.random()*height, r: 0.5 + Math.random()*1.1,
+      phase: Math.random()*Math.PI*2, speed: 0.4 + Math.random()*0.6 };
+  });
+  var sparkleSel = sparkleLayer.selectAll('circle').data(sparkles).join('circle')
+    .attr('cx', function(d){return d.x;}).attr('cy', function(d){return d.y;})
+    .attr('r', function(d){return d.r;}).attr('fill', '#ffffff');
+
+  var g = svg.append('g');
+  var tooltip = d3.select('#tooltip');
+
+  var cx = d3.mean(DATA.nodes, function(d){return d.x;});
+  var cy = d3.mean(DATA.nodes, function(d){return d.y;});
+  DATA.nodes.forEach(function(d){
+    var dx = d.x - cx, dy = d.y - cy;
+    var r = Math.sqrt(dx*dx+dy*dy) || 1;
+    var compressed = Math.pow(r, 0.68) * 5.4;
+    d.x = cx + (dx/r) * compressed;
+    d.y = cy + (dy/r) * compressed;
+  });
+
+  var margin = 50;
+  var xExtent = d3.extent(DATA.nodes, function(d){return d.x;});
+  var yExtent = d3.extent(DATA.nodes, function(d){return d.y;});
+  var xScale = d3.scaleLinear().domain(xExtent).range([margin, width-margin]);
+  var yScale = d3.scaleLinear().domain(yExtent).range([margin, height-margin]);
+
+  var freqExtent = d3.extent(DATA.nodes, function(d){return d.freq;});
+  var rScale = d3.scaleSqrt().domain(freqExtent).range([3, 13]);
+
+  DATA.nodes.forEach(function(d){
+    d.px = xScale(d.x); d.py = yScale(d.y);
+    d.baseX = d.px; d.baseY = d.py;
+    d.r = rScale(d.freq);
+  });
+
+  var nodeById = {};
+  DATA.nodes.forEach(function(d){ nodeById[d.id] = d; });
+
+  var sim = d3.forceSimulation(DATA.nodes)
+    .force('x', d3.forceX(function(d){return d.baseX;}).strength(0.4))
+    .force('y', d3.forceY(function(d){return d.baseY;}).strength(0.4))
+    .force('collide', d3.forceCollide(function(d){return d.r + 7;}))
+    .stop();
+  for (var i=0;i<200;i++) sim.tick();
+
+  DATA.nodes.forEach(function(d){ d.px = d.x; d.py = d.y; });
+
+  var edgesResolved = DATA.edges.map(function(e){
+    return { source: nodeById[e.source], target: nodeById[e.target], weight: e.weight };
+  });
+
+  var linkSel = g.append('g').attr('stroke', '#3a3b46').attr('stroke-opacity', 0.45)
+    .selectAll('line').data(edgesResolved).join('line')
+    .attr('stroke-width', function(d){ return Math.min(2.4, 0.4 + d.weight/14); });
+
+  var nodeG = g.append('g').selectAll('g').data(DATA.nodes).join('g')
+    .style('cursor','pointer');
+
+  nodeG.append('circle').attr('r', function(d){return d.r*2.2;}).attr('fill', function(d){return HYP_COLOR[d.hyp];}).attr('opacity',0.08);
+  nodeG.append('circle').attr('r', function(d){return d.r*1.5;}).attr('fill', function(d){return HYP_COLOR[d.hyp];}).attr('opacity',0.14);
+  nodeG.append('circle').attr('r', function(d){return d.r;}).attr('fill', function(d){return HYP_COLOR[d.hyp];}).attr('opacity',0.95);
+
+  nodeG.append('text').text(function(d){return d.id;})
+    .attr('x', function(d){return d.r+5;}).attr('y',3)
+    .attr('fill', '#c8c8d0').attr('font-size', 10)
+    .attr('font-weight', function(d){return d.freq >= 40 ? 600 : 400;})
+    .style('pointer-events','none');
+
+  var t0 = Date.now();
+  d3.timer(function(){
+    var t = (Date.now()-t0)/1000;
+    DATA.nodes.forEach(function(d, i){
+      d.x = d.px + Math.sin(t*0.045 + i*1.7) * 4;
+      d.y = d.py + Math.cos(t*0.038 + i*2.3) * 4;
+    });
+    linkSel.attr('x1', function(d){return d.source.x;}).attr('y1', function(d){return d.source.y;})
+      .attr('x2', function(d){return d.target.x;}).attr('y2', function(d){return d.target.y;});
+    nodeG.attr('transform', function(d){return 'translate('+d.x+','+d.y+')';});
+
+    sparkleSel.attr('opacity', function(d){
+      return 0.15 + 0.55 * (0.5 + 0.5*Math.sin(t*d.speed + d.phase));
+    });
+  });
+
+  var neighbors = {};
+  DATA.nodes.forEach(function(d){ neighbors[d.id] = new Set([d.id]); });
+  DATA.edges.forEach(function(e){ neighbors[e.source].add(e.target); neighbors[e.target].add(e.source); });
+
+  var active = null;
+  function highlight(id){
+    active = id;
+    if (!id) {
+      nodeG.transition().duration(300).style('opacity', 1);
+      linkSel.transition().duration(300).attr('stroke-opacity', 0.45);
+      return;
+    }
+    var keep = neighbors[id];
+    nodeG.transition().duration(300).style('opacity', function(d){return keep.has(d.id) ? 1 : 0.08;});
+    linkSel.transition().duration(300).attr('stroke-opacity', function(d){
+      return (keep.has(d.source.id) && keep.has(d.target.id)) ? 0.9 : 0.03;
+    });
+  }
+
+  nodeG.on('click', function(event, d){
+    event.stopPropagation();
+    highlight(active === d.id ? null : d.id);
+  }).on('mousemove', function(event, d){
+    var rect = stage.getBoundingClientRect();
+    var segLines = Object.keys(d.segments).map(function(s){return s+': '+d.segments[s];}).join(' · ');
+    tooltip.style('display','block')
+      .style('left', (event.clientX-rect.left+14)+'px')
+      .style('top', (event.clientY-rect.top+10)+'px')
+      .html('<strong>'+d.id+'</strong> · ~'+d.freq+'x<br>'+HYP_LABEL[d.hyp]+'<br>'+segLines);
+  }).on('mouseleave', function(){ tooltip.style('display','none'); });
+
+  svg.on('click', function(){ highlight(null); });
+
+  var zoom = d3.zoom().scaleExtent([0.6, 4]).on('zoom', function(event){
+    g.attr('transform', event.transform);
+  });
+  svg.call(zoom);
+})();
+</script>
+</body>
+</html>
