@@ -9,6 +9,7 @@
   a{color:#A15C33;}
   a:hover{color:#7C4526;}
 </style>
+<script src="./image-slot.js"></script>
 </head>
 <body>
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Helvetica,Arial,sans-serif;color:#23262B;background:#FAF7F2;">
@@ -22,7 +23,7 @@
       <a href="insights.html" style="font-size:14px;color:#23262B;text-decoration:none;">Insights</a>
       <a href="the-chennai-lab.html" style="font-size:14px;color:#23262B;text-decoration:none;">The Chennai Lab</a>
       <a href="media.html" style="font-size:14px;color:#23262B;text-decoration:none;">Media</a>
-      <a href="participate.html" style="font-size:14px;color:#FFFFFF;text-decoration:none;background:#A15C33;padding:9px 18px;border-radius:3px;font-weight:600;">Participate</a>
+      <a href="participate.html" style="font-size:14px;color:#23262B;text-decoration:none;">Participate</a>
       <a href="about.html" style="font-size:14px;color:#23262B;text-decoration:none;font-weight:600;border-bottom:2px solid #A15C33;padding-bottom:4px;">About</a>
     </nav>
   </div>
@@ -36,8 +37,8 @@
 
 <section style="max-width:1000px;margin:0 auto;padding:0 32px 96px;">
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:48px;align-items:start;">
-    <div style="width:100%;max-width:280px;height:280px;border-radius:6px;overflow:hidden;">
-      <img src="saarang.jpg" alt="Saarang Balaji" style="width:100%;height:100%;object-fit:cover;display:block;" />
+    <div style="width:280px;height:280px;border-radius:6px;overflow:hidden;">
+      <image-slot id="saarang-headshot" shape="rounded" radius="6" placeholder="Drop a professional photo of Saarang"></image-slot>
     </div>
     <div>
       <h2 style="font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:400;margin:0 0 6px;">Saarang Balaji</h2>
