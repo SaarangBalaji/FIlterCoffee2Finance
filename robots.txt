@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://filtercoffee2finance.com/sitemap.xml

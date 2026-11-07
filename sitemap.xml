@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Core pages -->
+  <url>
+    <loc>https://filtercoffee2finance.com/</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://filtercoffee2finance.com/about</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://filtercoffee2finance.com/contact</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+
+  <!-- Research -->
+  <url>
+    <loc>https://filtercoffee2finance.com/research</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://filtercoffee2finance.com/insights</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://filtercoffee2finance.com/participate</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+
+</urlset>
